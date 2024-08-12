@@ -1,6 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+	
 			message: null,
 			demo: [
 				{
@@ -16,10 +17,29 @@ const getState = ({ getStore, getActions, setStore }) => {
 			]
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
+			getAllUsers: async () => {
+				try {
+						// Realiza la solicitud al backend para obtener los usuarios
+						const resp = await fetch('https://stunning-train-x556jv5xgprx266p-3001.app.github.dev/users/all', {
+								method: "GET",
+								
+						});
+						if (!resp.ok) {
+								throw new Error("There was an error fetching the users");
+						}
+
+						// Convierte la respuesta a formato JSON
+						const data = await resp.json();
+
+						// Actualiza el estado del store con los usuarios obtenidos
+						setStore({ users: data });
+
+						// Retorna los usuarios para su uso si es necesario
+						return data;
+				} catch (error) {
+						console.log("Error loading users from backend 1111", error);
+				}
+		},
 
 			getMessage: async () => {
 				try{
