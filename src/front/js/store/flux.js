@@ -40,6 +40,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 						console.log("Error loading users from backend 1111", error);
 				}
 		},
+			postUser: async (userData) => {
+				try {
+					// Hacer la solicitud POST a la URL /users/create
+					const response = await fetch('https://stunning-train-x556jv5xgprx266p-3001.app.github.dev/users/create', {
+							method: 'POST', // Método HTTP
+							headers: {
+									'Content-Type': 'application/json' // Indicar que el cuerpo de la solicitud será JSON
+							},
+							body: JSON.stringify(userData) // Convertir el objeto userData a JSON
+					});
+
+					// Verificar si la respuesta es exitosa
+					if (!response.ok) {
+							throw new Error(`HTTP error! status: ${response.status}`);
+					}
+
+					// Parsear la respuesta a JSON
+					const data = await response.json();
+
+					// Retornar los datos obtenidos de la respuesta
+					return data;
+
+			} catch (error) {
+					// Manejo de errores
+					console.error('Error in postUser:', error);
+					throw error; // Propagar el error para manejarlo fuera de la función si es necesario
+			}
+	},
+
 
 			getMessage: async () => {
 				try{

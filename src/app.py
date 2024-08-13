@@ -82,6 +82,63 @@ def handle_get_all():
     
     return jsonify(all_users),200
 
+@app.route('/users/create', methods=['POST'])
+def create_user():
+    try:
+        data = request.get_json()
+        new_user = User(
+            email=data['email'],
+            password=data['password'],  # Considera encriptar el password
+            username=data['username'],
+            is_active=data.get('is_active', True)
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(new_user.serialize()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/users/get_user/<int:id>', methods=['GET'])
+def handle_get_user(id):
+    try:
+        # Buscar el usuario en la base de datos por ID
+        user = User.query.get(id)
+        
+        # Verificar si el usuario existe
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Devolver los datos del usuario en formato JSON
+        return jsonify(user.serialize()), 200
+    
+    except Exception as e:
+        # En caso de un error, devolver un mensaje de error y un código 500
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/users/delete/<int:id>', methods=['DELETE'])
+def handle_delete_user(id):
+    try:
+        # Buscar el usuario en la base de datos por ID
+        user = User.query.get(id)
+        
+        # Verificar si el usuario existe
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Eliminar el usuario de la base de datos
+        db.session.delete(user)
+        db.session.commit()
+        
+        # Devolver un mensaje de éxito
+        return jsonify({"message": "User deleted successfully"}), 200
+    
+    except Exception as e:
+        # En caso de un error, devolver un mensaje de error y un código 500
+        return jsonify({"error": str(e)}), 500
+
+
+
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
