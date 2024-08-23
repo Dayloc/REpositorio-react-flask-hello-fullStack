@@ -68,6 +68,25 @@ const getState = ({ getStore, getActions, setStore }) => {
 					throw error; // Propagar el error para manejarlo fuera de la función si es necesario
 			}
 	},
+	getUser: async (email) => {    
+    try {
+        // Realiza la solicitud al backend para obtener el usuario por email
+        const response = await fetch(`https://your-backend-url.com/users/get_user_by_email/${email}`);
+        
+        if (!response.ok) {
+            throw new Error("User not found");
+        }
+        
+        const data = await response.json();
+        
+        // Actualiza el store con los datos del usuario obtenidos
+        setStore({ user: data });
+        
+        return data;
+    } catch (error) {
+        console.error("Error fetching user:", error);
+    }
+},
 
 
 			getMessage: async () => {

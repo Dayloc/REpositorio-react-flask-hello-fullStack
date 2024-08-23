@@ -115,6 +115,23 @@ def handle_get_user(id):
     except Exception as e:
         # En caso de un error, devolver un mensaje de error y un código 500
         return jsonify({"error": str(e)}), 500
+    
+@app.route('/users/get_user_by_email/<string:email>', methods=['GET'])
+def handle_get_user_by_email(email):
+    try:
+        # Buscar el usuario en la base de datos por email
+        user = User.query.filter_by(email=email).first()
+        
+        # Verificar si el usuario existe
+        if user is None:
+            return jsonify({"error": "User not found"}), 404
+        
+        # Devolver los datos del usuario en formato JSON
+        return jsonify(user.serialize()), 200
+    
+    except Exception as e:
+        # En caso de un error, devolver un mensaje de error y un código 500
+        return jsonify({"error": str(e)}), 500    
 
 @app.route('/users/delete/<int:id>', methods=['DELETE'])
 def handle_delete_user(id):
